@@ -1,6 +1,6 @@
 PROJECT		:= main
 GCC4MBED_DIR	:= ../mbed
-DEVICES		:= NUCLEO_F411RE
+DEVICES		:= NUCLEO_F401RE
 MBED_LIBS	:= fs
 EXCLUDE 	:= libs/Network/ libs/ADC/ modules/utils/panel testframework/
 
