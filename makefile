@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-DIRS = mbed src
+DIRS = gcc4mbed src
 DIRSCLEAN = $(addsuffix .clean,$(DIRS))
 
 all:
