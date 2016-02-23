@@ -112,7 +112,7 @@ class Pin {
             if (this->inverting ^ value)
                 this->port->BSRR = 1 << this->pin;
             else
-                this->port->BSRR = 1 << this->pin;
+                this->port->BSRR = 1 << (this->pin + 16) ;
         }
 
         PwmOut *hardware_pwm();
