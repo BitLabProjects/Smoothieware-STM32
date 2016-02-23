@@ -1,0 +1,13 @@
+diff --git a/build/device-common.mk b/build/device-common.mk
+index ad5e004..a4dd8da 100755
+--- a/gcc4mbed/build/device-common.mk
++++ b/gcc4mbed/build/device-common.mk
+@@ -28,7 +28,7 @@ RELEASE_OPTIMIZATION := 2
+ DEP_FLAGS := -MMD -MP
+ 
+ # Preprocessor defines to use when compiling/assembling code with GCC.
+-GCC_DEFINES += $(TOOLCHAIN_DEFINES) -D__MBED__=1 -D_C99_SOURCE
++GCC_DEFINES += $(TOOLCHAIN_DEFINES) -D__MBED__=1
+ 
+ # Flags to be used with C/C++ compiler that are shared between Debug and Release builds.
+ C_FLAGS += -g3 -ffunction-sections -fdata-sections -fno-exceptions -fno-delete-null-pointer-checks -fomit-frame-pointer
