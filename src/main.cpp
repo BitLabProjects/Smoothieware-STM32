@@ -71,9 +71,9 @@ SDFileSystem sd  (SPI_MOSI, SPI_MISO, SPI_SCK, SPI_CS, "sd");
 //~ #endif
 
 Pin leds[3] = {
-    Pin(PC_10),
-    Pin(PC_11),
-    Pin(PC_12),
+    Pin(PA_5),
+    Pin(PA_5),
+    Pin(PA_5),
 };
 
 

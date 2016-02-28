@@ -21,7 +21,7 @@
 extern GPIO stepticker_debug_pin;
 #endif
 
-#define TICK_STEPPER_TIMER_PRESCALER    1000
+#define TICK_STEPPER_TIMER_PRESCALER    1
 #define RESET_TICK_TIMER_PRESCALER      10
 
 // StepTicker handles the base frequency ticking for the Stepper Motors / Actuators
