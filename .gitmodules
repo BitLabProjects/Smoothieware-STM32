@@ -1,0 +1,3 @@
+[submodule "gcc4mbed"]
+    path = gcc4mbed
+    url = https://github.com/adamgreen/gcc4mbed.git
