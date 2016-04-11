@@ -22,3 +22,4 @@ debug
 /win_install.log
 /linux_install.log
 /gcc4mbed
+/src/NUCLEO_F401RE

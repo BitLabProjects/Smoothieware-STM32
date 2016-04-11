@@ -1,6 +1,7 @@
 PROJECT		:= main
 GCC4MBED_DIR	:= ../gcc4mbed
-DEVICES		:= NUCLEO_F401RE
+DEVICE		:= NUCLEO_F401RE
+DEVICES		:= $(DEVICE)
 MBED_LIBS	:= fs
 EXCLUDE 	:= libs/Network/ libs/ADC/ modules/utils/panel testframework/
 
@@ -75,26 +76,29 @@ endif
 # set to not compile in any network support
 DEFINES += -DNONETWORK -DDISABLEMSD -DNO_TOOLS_TOUCHPROBE -DNO_UTILS_PANEL
 
+# compatibility with C11 (Default with GCC 5)
+DEFINES += -D_GNU_SOURCE
+
 include $(GCC4MBED_DIR)/build/gcc4mbed.mk
 
-CONSOLE?=/dev/ttyUSB0
-BAUD?=115200
+CONSOLE ?= /dev/ttyUSB0
+BAUD ?= 115200
 
 .PHONY: debug-store flash upload debug console dfu
 
-debug-store: ../LPC1768/$(PROJECT).elf
-	cp ../LPC1768/$(PROJECT).elf ../LPC1768/$(PROJECT)_lastupload.elf
+debug-store: ../$(DEVICE)/$(PROJECT).elf
+	cp ../$(DEVICE)/$(PROJECT).elf ../$(DEVICE)/$(PROJECT)_lastupload.elf
 
-flash: ../LPC1768/$(PROJECT).hex debug-store
+flash: ../$(DEVICE)/$(PROJECT).hex debug-store
 	lpc21isp $< $(CONSOLE) 115200 12000
 
-dfu: ../LPC1768/$(PROJECT).bin
+dfu: ../$(DEVICE)/$(PROJECT).bin
 	dfu-util -D $< -R
 
-upload: ../LPC1768/$(PROJECT).bin debug-store
+upload: ../$(DEVICE)/$(PROJECT).bin debug-store
 	dfu-util -R -d 1d50:6015 -D $<
 
-debug: ../LPC1768/$(PROJECT)_lastupload.elf
+debug: ../$(DEVICE)/$(PROJECT)_lastupload.elf
 	arm-none-eabi-gdb $< -ex  "set target-charset ASCII" -ex "set remotelogfile mri.log" -ex "target remote $(CONSOLE)"
 
 console:
