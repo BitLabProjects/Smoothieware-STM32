@@ -15,38 +15,38 @@ In this section you will clone the Smoothieware-STM32 repository and download th
 ===Prerequisites:
 * A git client installed
 ===Windows
+* Launch a command line in a directory (E.g.: C:\Dev\) 
 * Pull down a clone of the Smoothie github project to your local machine (this guide will use a folder named Smoothieware-STM32)
 {{{
-	git clone https://github.com/BitLabProjects/Smoothieware-STM32.git Smoothieware-STM32
+git clone https://github.com/BitLabProjects/Smoothieware-STM32.git Smoothieware-STM32
 }}}
 * Enter the folder and initialize the gcc4mbed submodule
 {{{
-	cd Smoothieware-STM32
-	git submodule init
-	git submodule update
+cd Smoothieware-STM32
+git submodule init
+git submodule update
 }}}
-* Enter the gcc4mbed folder, download the binaries of GCC to compile for the ARM platform, then return to the parent Smoothieware-STM32 folder
+* Download the binaries of GCC to compile for the ARM platform. This steps might take a while, as it also builds the gcc4mbed samples for all the platforms
 {{{
-	cd gcc4arm
-	win_install.bat
-	cd ..
+cd gcc4arm
+win_install.bat
+cd ..
 }}}
 
 * Done! You now have everything needed to build Smoothieware-STM32, proceed with the 'Building Smoothie' guide
 
 ==Building Smoothie
-From a shell, switch into the root Smoothie project directory and run:
+* Launch a command line in the clone directory (E.g.: C:\Dev\Smoothieware-STM32\)
+* Launch the script to initialize the build environment variables for the current command line
 {{{
-make clean
+gcc4mbed\BuildShell.cmd
+}}}
+* Build!
+{{{
 make all
 }}}
 
-To upload you can do
-
+* Now you can copy the compiled file to the drive (E.g.: The drive F:)
 {{{
-make upload
+copy src\NUCLEO_F401RE\main.bin F:
 }}}
-
-if you have dfu-util installed.
-
-Alternatively copy the file NUCLEO_F401RE/main.bin to the sdcard calling it firmware.bin and reset.
