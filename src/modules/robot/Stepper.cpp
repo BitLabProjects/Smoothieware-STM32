@@ -37,7 +37,11 @@ Stepper::Stepper()
     this->current_block = NULL;
     this->paused = false;
     this->force_speed_update = false;
-    this->halted= false;
+    this->halted = false;
+    this->is_compensating = false;
+    this->previous_direction_bits[ALPHA_STEPPER] = 0;
+    this->previous_direction_bits[BETA_STEPPER] = 0;
+    this->previous_direction_bits[GAMMA_STEPPER] = 0;
 }
 
 //Called when the module has just been loaded
@@ -161,6 +165,49 @@ void Stepper::on_block_begin(void *argument)
         this->turn_enable_pins_on();
     }
 
+    this->current_block = block;
+
+    // Compensate backlash
+    // if (cambio direzione)
+    //   Esegui step per cambio direzione
+    //   Alla fine in stepper_motor_finished_move lancia il movimento normale
+    // else
+    //   Lancia il movimento normale
+    
+    #define ALPHA_COMPENSATION_STEPS 80
+    #define BETA_COMPENSATION_STEPS 80
+    #define GAMMA_COMPENSATION_STEPS 80
+    bool comp_alpha = block->direction_bits[ALPHA_STEPPER] != this->previous_direction_bits[ALPHA_STEPPER];
+    bool comp_beta  = block->direction_bits[BETA_STEPPER] != this->previous_direction_bits[BETA_STEPPER];
+    bool comp_gamma = block->direction_bits[GAMMA_STEPPER] != this->previous_direction_bits[GAMMA_STEPPER];
+    if (comp_alpha || comp_beta || comp_gamma) {
+        this->main_stepper = nullptr;
+        if (comp_alpha) {
+            this->main_stepper = THEKERNEL->robot->alpha_stepper_motor;
+            this->previous_direction_bits[ALPHA_STEPPER] = block->direction_bits[ALPHA_STEPPER];
+            THEKERNEL->robot->alpha_stepper_motor->move( block->direction_bits[ALPHA_STEPPER], ALPHA_COMPENSATION_STEPS);
+        }
+        if (comp_beta) {
+            this->main_stepper = THEKERNEL->robot->beta_stepper_motor;
+            this->previous_direction_bits[BETA_STEPPER] = block->direction_bits[BETA_STEPPER];
+            THEKERNEL->robot->beta_stepper_motor->move( block->direction_bits[BETA_STEPPER], BETA_COMPENSATION_STEPS);
+        }
+        if (comp_gamma) {
+            this->main_stepper = THEKERNEL->robot->gamma_stepper_motor;
+            this->previous_direction_bits[GAMMA_STEPPER] = block->direction_bits[GAMMA_STEPPER];
+            THEKERNEL->robot->gamma_stepper_motor->move( block->direction_bits[GAMMA_STEPPER], GAMMA_COMPENSATION_STEPS);
+        }
+        this->trapezoid_generator_reset();
+        this->trapezoid_generator_tick();
+        this->is_compensating = true;
+    } else {
+        this->on_block_begin_do(block);
+    }
+}
+
+// A new block is popped from the queue
+void Stepper::on_block_begin_do(Block* block)
+{
     // Setup : instruct stepper motors to move
     // Find the stepper with the more steps, it's the one the speed calculations will want to follow
     this->main_stepper= nullptr;
@@ -187,7 +234,7 @@ void Stepper::on_block_begin(void *argument)
         THEKERNEL->robot->gamma_stepper_motor->set_moved_last_block(false);
     }
 
-    this->current_block = block;
+    //this->current_block = block;
 
     // Setup acceleration for this block
     this->trapezoid_generator_reset();
@@ -218,9 +265,14 @@ uint32_t Stepper::stepper_motor_finished_move(uint32_t dummy)
         return 0;
     }
 
-    // This block is finished, release it
-    if( this->current_block != NULL ) {
-        this->current_block->release();
+    if (this->is_compensating) {
+        this->is_compensating = false;
+        this->on_block_begin_do(this->current_block);
+    } else {
+        // This block is finished, release it
+        if( this->current_block != NULL ) {
+            this->current_block->release();
+        }
     }
 
     return 0;
@@ -233,6 +285,8 @@ uint32_t Stepper::stepper_motor_finished_move(uint32_t dummy)
 // NOTE caled at the same priority as PendSV so it may make that longer but it is better that having htis pre empted by pendsv
 void Stepper::trapezoid_generator_tick(void)
 {
+    if (this->is_compensating)
+        return;
     // Do not do the accel math for nothing
     if(this->current_block && !this->paused && this->main_stepper->moving ) {
 

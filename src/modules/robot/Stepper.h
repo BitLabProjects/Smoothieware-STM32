@@ -10,6 +10,7 @@
 
 #include "libs/Module.h"
 #include <stdint.h>
+#include <bitset>
 
 class Block;
 class StepperMotor;
@@ -43,6 +44,10 @@ private:
     Block *current_block;
     float trapezoid_adjusted_rate;
     StepperMotor *main_stepper;
+    bool is_compensating;
+    std::bitset<3> previous_direction_bits;
+
+    void on_block_begin_do(Block* block);
 
     struct {
         bool enable_pins_status:1;
