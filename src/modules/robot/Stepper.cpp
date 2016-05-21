@@ -185,20 +185,18 @@ void Stepper::on_block_begin(void *argument)
         if (comp_alpha) {
             this->main_stepper = THEKERNEL->robot->alpha_stepper_motor;
             this->previous_direction_bits[ALPHA_STEPPER] = block->direction_bits[ALPHA_STEPPER];
-            THEKERNEL->robot->alpha_stepper_motor->move( block->direction_bits[ALPHA_STEPPER], ALPHA_COMPENSATION_STEPS);
+            THEKERNEL->robot->alpha_stepper_motor->move( block->direction_bits[ALPHA_STEPPER], ALPHA_COMPENSATION_STEPS, this->current_block->nominal_rate)->set_moved_last_block(true);
         }
         if (comp_beta) {
             this->main_stepper = THEKERNEL->robot->beta_stepper_motor;
             this->previous_direction_bits[BETA_STEPPER] = block->direction_bits[BETA_STEPPER];
-            THEKERNEL->robot->beta_stepper_motor->move( block->direction_bits[BETA_STEPPER], BETA_COMPENSATION_STEPS);
+            THEKERNEL->robot->beta_stepper_motor->move( block->direction_bits[BETA_STEPPER], BETA_COMPENSATION_STEPS, this->current_block->nominal_rate)->set_moved_last_block(true);
         }
         if (comp_gamma) {
             this->main_stepper = THEKERNEL->robot->gamma_stepper_motor;
             this->previous_direction_bits[GAMMA_STEPPER] = block->direction_bits[GAMMA_STEPPER];
-            THEKERNEL->robot->gamma_stepper_motor->move( block->direction_bits[GAMMA_STEPPER], GAMMA_COMPENSATION_STEPS);
+            THEKERNEL->robot->gamma_stepper_motor->move( block->direction_bits[GAMMA_STEPPER], GAMMA_COMPENSATION_STEPS, this->current_block->nominal_rate)->set_moved_last_block(true);
         }
-        this->trapezoid_generator_reset();
-        this->trapezoid_generator_tick();
         this->is_compensating = true;
     } else {
         this->on_block_begin_do(block);
