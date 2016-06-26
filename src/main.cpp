@@ -87,7 +87,7 @@ void init() {
     RCC->AHB1ENR |= (RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN| RCC_AHB1ENR_GPIODEN | RCC_AHB1ENR_GPIOHEN);
 
     // Default pins to low status
-    for (int i = 0; i < 5; i++){
+    for (int i = 0; i < 3; i++){
         leds[i].as_output();
         leds[i]= 0;
     }
@@ -236,7 +236,7 @@ int main()
 {
     init();
 
-    uint16_t cnt= 0;
+    uint32_t cnt= 0;
     // Main loop
     while(1){
         if(THEKERNEL->use_leds) {
