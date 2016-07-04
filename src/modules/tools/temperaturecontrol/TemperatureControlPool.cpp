@@ -25,13 +25,18 @@ void TemperatureControlPool::load_tools()
     vector<uint16_t> modules;
     THEKERNEL->config->get_module_list( &modules, temperature_control_checksum );
     int cnt = 0;
-    for( auto cs : modules ) {
-        // If module is enabled
-        if( THEKERNEL->config->value(temperature_control_checksum, cs, enable_checksum )->as_bool() ) {
-            TemperatureControl *controller = new TemperatureControl(cs, cnt++);
-            THEKERNEL->add_module(controller);
-        }
-    }
+
+    //Temporary setup for single fixed Hot-End controller
+    TemperatureControl *controller = new TemperatureControl(0, 0);
+    THEKERNEL->add_module(controller);
+
+    //for( auto cs : modules ) {
+    //    // If module is enabled
+    //    if( THEKERNEL->config->value(temperature_control_checksum, cs, enable_checksum )->as_bool() ) {
+    //        TemperatureControl *controller = new TemperatureControl(cs, cnt++);
+    //        THEKERNEL->add_module(controller);
+    //    }
+    //}
 
     // no need to create one of these if no heaters defined
     if(cnt > 0) {
