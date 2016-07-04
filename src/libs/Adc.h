@@ -10,15 +10,17 @@
 #ifndef ADC_H
 #define ADC_H
 
-#include "PinNames.h" // mbed.h lib
+//#include "PinNames.h" // mbed.h lib
 
 #include <cmath>
+
+#include "AnalogIn.h"
 
 class Pin;
 
 // define how many bits of extra resolution required
 // 2 bits means the 12bit ADC is 14 bits of resolution
-#define OVERSAMPLE 2
+//#define OVERSAMPLE 2
 
 class Adc
 {
@@ -38,9 +40,10 @@ public:
 
 private:
     PinName _pin_to_pinname(Pin *pin);
-    /* FIXME STM32
-    mbed::ADC *adc;
-    */
+    //TODO Use interrupt sampling
+    //mbed::ADC *adc;
+    mbed::AnalogIn input;
+
     static const int num_channels= 6;
 #ifdef OVERSAMPLE
     // we need 4^n sample to oversample and we get double that to filter out spikes

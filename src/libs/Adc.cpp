@@ -26,7 +26,7 @@ static void sample_isr(int chan, uint32_t value)
     Adc::instance->new_sample(chan, value);
 }
 
-Adc::Adc()
+Adc::Adc(): input(PC_2)
 {
     instance = this;
     // ADC sample rate need to be fast enough to be able to read the enabled channels within the thermistor poll time
@@ -83,6 +83,9 @@ void Adc::new_sample(int chan, uint32_t value)
 // Read the filtered value ( burst mode ) on a given pin
 unsigned int Adc::read(Pin *pin)
 {
+    unsigned int value = (unsigned int) this->input.read_u16();
+    return value >> 4;
+
 #warning STM32
 /* FIXME STM32
     PinName p = this->_pin_to_pinname(pin);
