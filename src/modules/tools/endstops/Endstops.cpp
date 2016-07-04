@@ -755,6 +755,50 @@ void Endstops::on_gcode_received(void *argument)
                 }
             break;
 
+            //Measure the number of steps taken to go from min to max
+            case 700: {
+                if (this->is_delta || this->is_scara){
+                    gcode->stream->printf("Not supported for delta/scara");
+                } else {
+                    //TODO Abort command when either min or max is not available
+
+                    //Pick the axis to measure from command
+                    int32_t axis_to_move;
+                    if (gcode->has_letter('X')) 
+                        axis_to_move = X_AXIS;
+                    else if (gcode->has_letter('Y')) 
+                        axis_to_move = Y_AXIS;
+                    else if (gcode->has_letter('Z')) 
+                        axis_to_move = Z_AXIS;
+                    else
+                        return;
+
+                    if (!this->pins[axis_to_move].connected() || !this->pins[axis_to_move+3].connected()) {
+                        gcode->stream->printf("Endstops not connected for this axis");
+                    }
+
+                    gcode->stream->printf("Save a backup of home direction and move to min");
+                    //Save a backup of home direction and move to min
+                    bool home_direction_backup = this->home_direction[axis_to_move];
+                    this->home_direction[axis_to_move] = false;
+                    char axes_to_move = 1 << axis_to_move;
+                    this->home(axes_to_move);
+
+                    gcode->stream->printf("Save step count and move to max");
+                    //Save step count and move to max
+                    int32_t initial_steps_position = STEPPER[axis_to_move]->get_current_position_steps();
+                    this->home_direction[axis_to_move] = true;
+                    this->home(axes_to_move);
+
+                    //Restore move direction
+                    this->home_direction[axis_to_move] = home_direction_backup;
+                    //Print calculated step count
+                    int32_t steps_done = STEPPER[axis_to_move]->get_current_position_steps() - initial_steps_position;
+                    THEKERNEL->streams->printf("Steps travelled for axis %c: %i\n", axis_to_move+'X', steps_done);
+                }
+                break;
+            }
+
             // NOTE this is to test accuracy of lead screws etc.
             case 910: { // M910 - move specific number of raw steps
                 // Enable the motors
