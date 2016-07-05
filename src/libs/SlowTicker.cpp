@@ -19,7 +19,7 @@ using namespace std;
 
 #include <mri.h>
 
-#define SLOW_TIMER_PRESCALER    100
+#define SLOW_TIMER_PRESCALER    10000
 
 // This module uses a Timer to periodically call hooks
 // Modules register with a function ( callback ) and a frequency, and we then call that function at the given frequency.
@@ -36,20 +36,19 @@ SlowTicker::SlowTicker(){
 
     // TODO: What is this ??
     flag_1s_flag = 0;
-    // The APB1 bus clock is Core clock frequency / 2
-    flag_1s_count = SystemCoreClock >> 1;
-    // Tick 10 times per seconds at beginning
-    this->interval = ((SystemCoreClock >> 1) / SLOW_TIMER_PRESCALER) / 10;
 
     RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;             // Enable TIM9 clock
-    TIM4->PSC = SLOW_TIMER_PRESCALER - 1;           // Set prescaler to 10000
-    TIM4->ARR = this->interval - 1;                 // Set auto-reload
+    TIM4->PSC = SLOW_TIMER_PRESCALER - 1;           // Set prescaler
     TIM4->EGR |= TIM_EGR_UG;                        // Force update
     TIM4->SR &= ~TIM_SR_UIF;                        // Clear the update flag
+
+
     TIM4->DIER |= TIM_DIER_UIE;                     // Enable interrupt on update event
     NVIC_EnableIRQ(TIM4_IRQn);                      // Enable TIM9 IRQ
-    TIM4->CR1 |= TIM_CR1_CEN;                       // Enable TIM9 counter
     
+    // Tick 10 times per seconds at beginning
+    // Note: set_frequency also enables the timer
+    set_frequency(10);
 }
 
 void SlowTicker::on_module_loaded(){
@@ -58,12 +57,14 @@ void SlowTicker::on_module_loaded(){
 
 // Set the base frequency we use for all sub-frequencies
 void SlowTicker::set_frequency( int frequency ){
-    this->interval = ((SystemCoreClock >> 1) / SLOW_TIMER_PRESCALER) / frequency;   // SystemCoreClock/4 = Timer increments in a second
+    // The APB1 max bus clock is Core clock frequency / 2, but for some reasons it seems that TIM4 is 
+    // going at full speed (SystemCoreClock instead of SystemCoreClock/2)
+    this->interval = ((SystemCoreClock) / SLOW_TIMER_PRESCALER) / frequency;
     
     TIM4->CR1 &= ~TIM_CR1_CEN;                       // Disable TIM4 counter
-    flag_1s_count = ((SystemCoreClock >> 1) / SLOW_TIMER_PRESCALER);
-    TIM4->ARR = this->interval - 1;
-    TIM4->CNT = 0;                       // Reset counter
+    flag_1s_count = ((SystemCoreClock) / SLOW_TIMER_PRESCALER);
+    TIM4->ARR = this->interval;
+    TIM4->CNT = 0;                                  // Reset counter
     TIM4->CR1 |= TIM_CR1_CEN;                       // Enable it again
 }
 
@@ -86,7 +87,7 @@ void SlowTicker::tick(){
     if (flag_1s_count < 0)
     {
         // add a second to our counter
-        flag_1s_count += ((SystemCoreClock >> 1) / SLOW_TIMER_PRESCALER);
+        flag_1s_count += ((SystemCoreClock) / SLOW_TIMER_PRESCALER);
         // and set a flag for idle event to pick up
         flag_1s_flag++;
     }
@@ -101,20 +102,21 @@ void SlowTicker::tick(){
 bool SlowTicker::flag_1s(){
     // atomic flag check routine
     // first disable interrupts
+    bool result;
     __disable_irq();
     // then check for a flag
     if (flag_1s_flag)
     {
         // if we have a flag, decrement the counter
         flag_1s_flag--;
-        // re-enable interrupts
-        __enable_irq();
         // and tell caller that we consumed a flag
-        return true;
+        result = true;
+    } else {
+        result = false;
     }
-    // if no flag, re-enable interrupts and return false
+    // re-enable interrupts
     __enable_irq();
-    return false;
+    return result;
 }
 
 extern Pin leds[3];
@@ -137,6 +139,4 @@ extern "C" void TIM4_IRQHandler (void){
         TIM4->SR &= ~TIM_SR_UIF;         // Reset it
     }
     global_slow_ticker->tick();
-
 }
-

@@ -239,10 +239,13 @@ int main()
     uint32_t cnt= 0;
     // Main loop
     while(1){
+        //The led is now flashed by SlowTicker
+        /*
         if(THEKERNEL->use_leds) {
             // flash led 2 to show we are alive
             leds[1]= (cnt++ & 0x1000) ? 1 : 0;
         }
+        */
         THEKERNEL->call_event(ON_MAIN_LOOP);
         THEKERNEL->call_event(ON_IDLE);
     }
