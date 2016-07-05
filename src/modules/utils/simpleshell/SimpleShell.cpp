@@ -474,14 +474,19 @@ void SimpleShell::save_command( string parameters, StreamOutput *stream )
     stream->printf("Settings Stored to %s\r\n", filename.c_str());
 }
 
+// For ARM7 only
+register unsigned char * stack_ptr __asm ("sp");
+unsigned long get_MaxHeap() {
+    //Code taken from mbed retarget.cpp, only the armv7 part
+    return (unsigned long)stack_ptr;
+}
+
 // show free memory
 void SimpleShell::mem_command( string parameters, StreamOutput *stream)
 {
-#warning STM32
-/* FIXME STM32 
     bool verbose = shift_parameter( parameters ).find_first_of("Vv") != string::npos ;
     unsigned long heap = (unsigned long)_sbrk(0);
-    unsigned long m = g_maximumHeapAddress - heap;
+    unsigned long m = get_MaxHeap() - heap;
     stream->printf("Unused Heap: %lu bytes\r\n", m);
 
     uint32_t f = heapWalk(stream, verbose);
@@ -492,7 +497,6 @@ void SimpleShell::mem_command( string parameters, StreamOutput *stream)
         AHB0.debug(stream);
         AHB1.debug(stream);
     }
-    * */
 }
 
 // get network config
