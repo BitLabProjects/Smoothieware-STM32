@@ -495,24 +495,6 @@ void SimpleShell::mem_command( string parameters, StreamOutput *stream)
     * */
 }
 
-static uint32_t getDeviceType()
-{
-#define IAP_LOCATION 0x1FFF1FF1
-    uint32_t command[1];
-    uint32_t result[5];
-    typedef void (*IAP)(uint32_t *, uint32_t *);
-    IAP iap = (IAP) IAP_LOCATION;
-
-    __disable_irq();
-
-    command[0] = 54;
-    iap(command, result);
-
-    __enable_irq();
-
-    return result[1];
-}
-
 // get network config
 void SimpleShell::net_command( string parameters, StreamOutput *stream)
 {
@@ -532,8 +514,7 @@ void SimpleShell::net_command( string parameters, StreamOutput *stream)
 void SimpleShell::version_command( string parameters, StreamOutput *stream)
 {
     Version vers;
-    uint32_t dev = getDeviceType();
-    const char *mcu = (dev & 0x00100000) ? "LPC1769" : "LPC1768";
+    const char *mcu = "stm32f401re";
     stream->printf("Build version: %s, Build date: %s, MCU: %s, System Clock: %ldMHz\r\n", vers.get_build(), vers.get_build_date(), mcu, SystemCoreClock / 1000000);
 }
 
