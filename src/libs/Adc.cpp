@@ -21,37 +21,30 @@ using namespace std;
 
 Adc *Adc::instance;
 
-static void sample_isr(int chan, uint32_t value)
+#define SAMPLE_BUFFER_LENGTH 16
+uint32_t buffer[SAMPLE_BUFFER_LENGTH];
+
+static void callback(uint32_t offset, uint32_t length)
 {
-    Adc::instance->new_sample(chan, value);
+    int channel = 0;
+    for(uint32_t i=offset; i<offset+length; i++) {
+        Adc::instance->new_sample(channel, buffer[i]);
+    }
 }
 
-Adc::Adc(): input(PC_2)
+Adc::Adc()
 {
     instance = this;
+    
     // ADC sample rate need to be fast enough to be able to read the enabled channels within the thermistor poll time
     // even though ther maybe 32 samples we only need one new one within the polling time
-/* FIXME STM32
+    
+    //TODO Configure the sampling time to be 1KHz
     const uint32_t sample_rate= 1000; // 1KHz sample rate
 
-    this->adc = new mbed::ADC(sample_rate, 8);
-    this->adc->append(sample_isr);
-*/
+    input.init(PC_2, buffer, SAMPLE_BUFFER_LENGTH, callback);
+    input.start();
 }
-
-/*
-LPC176x ADC channels and pins
-
-Adc Channel Port Pin    Pin Functions                       Associated PINSEL Register
-AD0 P0.23   0-GPIO,     1-AD0[0], 2-I2SRX_CLK, 3-CAP3[0]    14,15 bits of PINSEL1
-AD1 P0.24   0-GPIO,     1-AD0[1], 2-I2SRX_WS, 3-CAP3[1]     16,17 bits of PINSEL1
-AD2 P0.25   0-GPIO,     1-AD0[2], 2-I2SRX_SDA, 3-TXD3       18,19 bits of PINSEL1
-AD3 P0.26   0-GPIO,     1-AD0[3], 2-AOUT, 3-RXD3            20,21 bits of PINSEL1
-AD4 P1.30   0-GPIO,     1-VBUS, 2- , 3-AD0[4]               28,29 bits of PINSEL3
-AD5 P1.31   0-GPIO,     1-SCK1, 2- , 3-AD0[5]               30,31 bits of PINSEL3
-AD6 P0.3    0-GPIO,     1-RXD0, 2-AD0[6], 3-                6,7 bits of PINSEL0
-AD7 P0.2    0-GPIO,     1-TXD0, 2-AD0[7], 3-                4,5 bits of PINSEL0
-*/
 
 // Enables ADC on a given pin
 void Adc::enable_pin(Pin *pin)
@@ -83,15 +76,15 @@ void Adc::new_sample(int chan, uint32_t value)
 // Read the filtered value ( burst mode ) on a given pin
 unsigned int Adc::read(Pin *pin)
 {
-    unsigned int value = (unsigned int) this->input.read_u16();
-    return value >> 4;
+    //unsigned int value = (unsigned int) this->input.read_u16();
+    //return value >> 4;
 
 #warning STM32
 /* FIXME STM32
     PinName p = this->_pin_to_pinname(pin);
     int channel = adc->_pin_to_channel(p);
 */
-        int channel = 0;
+    int channel = 0;
     uint16_t median_buffer[num_samples];
     // needs atomic access TODO maybe be able to use std::atomic here or some lockless mutex
     __disable_irq();
