@@ -20,6 +20,8 @@ using namespace std;
 
 #include <math.h>
 
+#define SLOW_TIMER_PRESCALER    10000
+
 class SlowTicker : public Module{
     public:
         SlowTicker();
@@ -33,7 +35,7 @@ class SlowTicker : public Module{
         // TODO replace this with std::function()
         template<typename T> Hook* attach( uint32_t frequency, T *optr, uint32_t ( T::*fptr )( uint32_t ) ){
             Hook* hook = new Hook();
-            hook->interval = floorf((SystemCoreClock/4)/frequency);
+            hook->interval = floorf(((SystemCoreClock) / SLOW_TIMER_PRESCALER) / frequency);
             hook->attach(optr, fptr);
             hook->countdown = hook->interval;
 

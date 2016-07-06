@@ -19,8 +19,6 @@ using namespace std;
 
 #include <mri.h>
 
-#define SLOW_TIMER_PRESCALER    10000
-
 // This module uses a Timer to periodically call hooks
 // Modules register with a function ( callback ) and a frequency, and we then call that function at the given frequency.
 
