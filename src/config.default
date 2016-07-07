@@ -7,6 +7,48 @@
 # git update-index --assume-unchanged src/config.default
 #
 
+#leveling-strategy.three-point-leveling.probe_offsets  0,0,0       # the probe offsets from nozzle, must be x,y,z, default is no offset# Robot module configurations : general handling of movement G-codes and slicing into moves
+#default_feed_rate                            4000             # Default rate ( mm/minute ) for G1/G2/G3 moves
+#default_seek_rate                            4000             # Default rate ( mm/minute ) for G0 moves
+#mm_per_arc_segment                           0.5              # Arcs are cut into segments ( lines ), this is the length for these segments.  Smaller values mean more resolution, higher values mean faster computation
+#mm_per_line_segment                          5                # Lines can be cut into segments ( not usefull with cartesian coordinates robots ).
+
+# Arm solution configuration : Cartesian robot. Translates mm positions into stepper positions
+alpha_steps_per_mm                           150
+beta_steps_per_mm                            150
+gamma_steps_per_mm                           150
+
+# Planner module configuration : Look-ahead and acceleration configuration
+#planner_queue_size                           32               # DO NOT CHANGE THIS UNLESS YOU KNOW EXACTLY WHAT YOUR ARE DOING
+#acceleration                                 3000             # Acceleration in mm/second/second.
+#z_acceleration                               500              # Acceleration for Z only moves in mm/s^2, 0 disables it, disabled by default. DO NOT SET ON A DELTA
+#acceleration_ticks_per_second                1000             # Number of times per second the speed is updated
+#junction_deviation                           0.05             # Similar to the old "max_jerk", in millimeters, see : https://github.com/grbl/grbl/blob/master/planner.c#L409
+                                                               # and https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8 . Lower values mean being more careful, higher values means being faster and have more jerk
+
+# Stepper module pins ( ports, and pin numbers, appending "!" to the number will invert a pin )
+alpha_step_pin                               A.10             # Pin for alpha stepper step signal
+alpha_dir_pin                                B.3              # Pin for alpha stepper direction
+#alpha_en_pin                                 A.10             # Pin for alpha enable pin
+#alpha_current                                1.0              # X stepper motor current
+#x_axis_max_speed                             30000            # mm/min
+#alpha_max_rate                               30000.0          # mm/min actuator max speed
+
+beta_step_pin                                B.10             # Pin for beta stepper step signal
+beta_dir_pin                                 A.8              # Pin for beta stepper direction
+#beta_en_pin                                  B.4              # Pin for beta enable
+#beta_current                                 1.0              # Y stepper motor current
+#y_axis_max_speed                             30000            # mm/min
+#beta_max_rate                                30000.0          # mm/min actuator max speed
+
+gamma_step_pin                               B.5              # Pin for gamma stepper step signal
+gamma_dir_pin                                B.4              # Pin for gamma stepper direction
+#gamma_en_pin                                 B.14             # Pin for gamma enable
+#gamma_current                                1.0              # Z stepper motor current
+#z_axis_max_speed                             300              # mm/min
+#gamma_max_rate                               300.0            # mm/min actuator max speed
+
+
 # Hotend temperature control configuration
 temperature_control.hotend.enable            true             # Whether to activate this ( "hotend" ) module at all. All configuration is ignored if false.
 temperature_control.hotend.thermistor_pin    C.2              # Pin for the thermistor to read
@@ -25,3 +67,43 @@ temperature_control.hotend.beta              3950
 #temperature_control.hotend.p_factor          13.7             #
 #temperature_control.hotend.i_factor          0.097            #
 #temperature_control.hotend.d_factor          24               #
+
+# Endstops
+endstops_enable                              true             # the endstop module is enabled by default and can be disabled here
+#corexy_homing                               false            # set to true if homing on a hbit or corexy
+alpha_min_endstop                            A.4^            # add a ! to invert if endstop is NO connected to ground
+alpha_max_endstop                            B.0^            #
+alpha_homing_direction                       home_to_min      # or set to home_to_max and set alpha_max
+alpha_min                                    0                # this gets loaded after homing when home_to_min is set
+alpha_max                                    200              # this gets loaded after homing when home_to_max is set
+beta_min_endstop                             C.0^           
+beta_max_endstop                             A.1^            
+beta_homing_direction                        home_to_min      
+beta_min                                     0                
+beta_max                                     200              
+gamma_min_endstop                            C.1^            
+gamma_max_endstop                            A.0^            
+gamma_homing_direction                       home_to_min      
+gamma_min                                    0                
+gamma_max                                    200              
+
+# optional enable limit switches, actions will stop if any enabled limit switch is triggered
+#alpha_limit_enable                          false            # set to true to enable X min and max limit switches
+#beta_limit_enable                           false            # set to true to enable Y min and max limit switches
+#gamma_limit_enable                          false            # set to true to enable Z min and max limit switches
+
+#probe endstop
+#probe_pin                                   1.29             # optional pin for probe
+
+alpha_fast_homing_rate_mm_s                  2                # feedrates in mm/second
+beta_fast_homing_rate_mm_s                   2
+gamma_fast_homing_rate_mm_s                  2
+alpha_slow_homing_rate_mm_s                  1
+beta_slow_homing_rate_mm_s                   1
+gamma_slow_homing_rate_mm_s                  1
+
+alpha_homing_retract_mm                      5                # distance in mm
+beta_homing_retract_mm                       5                # "
+gamma_homing_retract_mm                      5                # "
+
+#endstop_debounce_count                       100              # uncomment if you get noise on your endstops, default is 100

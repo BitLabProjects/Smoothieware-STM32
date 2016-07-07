@@ -201,20 +201,20 @@ void Robot::on_config_reload(void *argument)
     Pin gamma_dir_pin;
     Pin gamma_en_pin;
 
-    alpha_step_pin.from_string( THEKERNEL->config->value(alpha_step_pin_checksum )->by_default("A.10"  )->as_string())->as_output();
-    alpha_dir_pin.from_string(  THEKERNEL->config->value(alpha_dir_pin_checksum  )->by_default("B.3"  )->as_string())->as_output();
-    alpha_en_pin.from_string(   THEKERNEL->config->value(alpha_en_pin_checksum   )->by_default("A.5"  )->as_string())->as_output();
-    beta_step_pin.from_string(  THEKERNEL->config->value(beta_step_pin_checksum  )->by_default("B.10" )->as_string())->as_output();
-    beta_dir_pin.from_string(   THEKERNEL->config->value(beta_dir_pin_checksum   )->by_default("A.8" )->as_string())->as_output();
-    beta_en_pin.from_string(    THEKERNEL->config->value(beta_en_pin_checksum    )->by_default("A.10" )->as_string())->as_output();
-    gamma_step_pin.from_string( THEKERNEL->config->value(gamma_step_pin_checksum )->by_default("B.5"  )->as_string())->as_output();
-    gamma_dir_pin.from_string(  THEKERNEL->config->value(gamma_dir_pin_checksum  )->by_default("B.4"  )->as_string())->as_output();
-    gamma_en_pin.from_string(   THEKERNEL->config->value(gamma_en_pin_checksum   )->by_default("A.19" )->as_string())->as_output();
+    alpha_step_pin.from_string( THEKERNEL->config->value(alpha_step_pin_checksum )->by_default("nc")->as_string())->as_output();
+    alpha_dir_pin.from_string(  THEKERNEL->config->value(alpha_dir_pin_checksum  )->by_default("nc")->as_string())->as_output();
+    alpha_en_pin.from_string(   THEKERNEL->config->value(alpha_en_pin_checksum   )->by_default("nc")->as_string())->as_output();
+    beta_step_pin.from_string(  THEKERNEL->config->value(beta_step_pin_checksum  )->by_default("nc")->as_string())->as_output();
+    beta_dir_pin.from_string(   THEKERNEL->config->value(beta_dir_pin_checksum   )->by_default("nc")->as_string())->as_output();
+    beta_en_pin.from_string(    THEKERNEL->config->value(beta_en_pin_checksum    )->by_default("nc")->as_string())->as_output();
+    gamma_step_pin.from_string( THEKERNEL->config->value(gamma_step_pin_checksum )->by_default("nc")->as_string())->as_output();
+    gamma_dir_pin.from_string(  THEKERNEL->config->value(gamma_dir_pin_checksum  )->by_default("nc")->as_string())->as_output();
+    gamma_en_pin.from_string(   THEKERNEL->config->value(gamma_en_pin_checksum   )->by_default("nc")->as_string())->as_output();
 
     float steps_per_mm[3] = {
-        THEKERNEL->config->value(alpha_steps_per_mm_checksum)->by_default( 150.0F)->as_number(),
-        THEKERNEL->config->value(beta_steps_per_mm_checksum )->by_default( 150.0F)->as_number(),
-        THEKERNEL->config->value(gamma_steps_per_mm_checksum)->by_default( 150.0F)->as_number(),
+        THEKERNEL->config->value(alpha_steps_per_mm_checksum)->by_default(  80.0F)->as_number(),
+        THEKERNEL->config->value(beta_steps_per_mm_checksum )->by_default(  80.0F)->as_number(),
+        THEKERNEL->config->value(gamma_steps_per_mm_checksum)->by_default(2560.0F)->as_number(),
     };
 
     // TODO: delete or detect old steppermotors
