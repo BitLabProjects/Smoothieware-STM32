@@ -514,56 +514,12 @@ void SimpleShell::net_command( string parameters, StreamOutput *stream)
     }
 }
 
-uint32_t RCC_GetClockFreq()
-{
-  uint32_t pllclk, pllsource, plln, pllm, vcoclk, pllp;
-  uint32_t clock;
-
-  switch (RCC->CFGR & RCC_CFGR_SWS)
-  {
-    case 0x00:  /* HSI used as system clock */
-      clock = HSI_VALUE;
-      break;
-
-    case 0x04:  /* HSE used as system clock */
-      clock = HSE_VALUE;
-      break;
-
-    case 0x08:  /* PLL used as system clock */
-      pllsource = RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC;
-      if (pllsource == 0x00)
-        pllclk = HSI_VALUE;
-      else
-        pllclk = HSE_VALUE;
-
-      plln = (RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 6;
-      pllm = (RCC->PLLCFGR & RCC_PLLCFGR_PLLM);
-      vcoclk = pllclk * plln / pllm;
-
-      pllp = (RCC->PLLCFGR & RCC_PLLCFGR_PLLP) >> 16;
-      pllp = 2*(pllp+1);
-      clock = vcoclk / pllp;
-      break;
-
-    default: /* HSI used as system clock */
-      clock = HSI_VALUE;
-      break;
-  }
-  uint32_t hpre = (RCC->CFGR & RCC_CFGR_HPRE) >> 4;
-  if ((hpre & 0x8) == 0)
-    hpre = 1;
-  else
-    hpre = (2 << (hpre & 0x7));
-  
-  return clock / hpre;
-}
-
 // print out build version
 void SimpleShell::version_command( string parameters, StreamOutput *stream)
 {
     Version vers;
     const char *mcu = "stm32f401re";
-    stream->printf("Build version: %s, Build date: %s, MCU: %s, System Clock: %ldMHz\r\n", vers.get_build(), vers.get_build_date(), mcu, RCC_GetClockFreq() / 1000000);
+    stream->printf("Build version: %s, Build date: %s, MCU: %s, System Clock: %ldMHz\r\n", vers.get_build(), vers.get_build_date(), mcu, SystemCoreClock / 1000000);
 }
 
 // Reset the system
