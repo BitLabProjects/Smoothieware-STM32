@@ -7,4 +7,21 @@
 # git update-index --assume-unchanged src/config.default
 #
 
+# Hotend temperature control configuration
+temperature_control.hotend.enable            true             # Whether to activate this ( "hotend" ) module at all. All configuration is ignored if false.
+temperature_control.hotend.thermistor_pin    C.2              # Pin for the thermistor to read
+#temperature_control.hotend.heater_pin       2.5              # Pin that controls the heater
+#temperature_control.hotend.thermistor        EPCOS100K        # see http://smoothieware.org/temperaturecontrol#toc5
+temperature_control.hotend.r0                100000
+temperature_control.hotend.t0                25
+temperature_control.hotend.r1                4700
+temperature_control.hotend.r2                1000
+temperature_control.hotend.beta              3950
 
+#temperature_control.hotend.set_m_code        104              #
+#temperature_control.hotend.set_and_wait_m_code 109            #
+#temperature_control.hotend.designator        W                #
+
+#temperature_control.hotend.p_factor          13.7             #
+#temperature_control.hotend.i_factor          0.097            #
+#temperature_control.hotend.d_factor          24               #

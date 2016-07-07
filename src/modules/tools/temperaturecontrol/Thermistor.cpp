@@ -59,9 +59,9 @@ void Thermistor::UpdateConfig(uint16_t module_checksum, uint16_t name_checksum)
     // Values are here : http://reprap.org/wiki/Thermistor
     this->r0   = 100000;
     this->t0   = 25;
-    this->r1   = 4700;
-    this->r2   = 1000;
-    this->beta = 3950;
+    this->r1   = 0;
+    this->r2   = 4700;
+    this->beta = 4066;
 
     // force use of beta perdefined thermistor table based on betas
     bool use_beta_table= THEKERNEL->config->value(module_checksum, name_checksum, use_beta_table_checksum)->by_default(false)->as_bool();
@@ -123,7 +123,7 @@ void Thermistor::UpdateConfig(uint16_t module_checksum, uint16_t name_checksum)
     this->r2 = THEKERNEL->config->value(module_checksum, name_checksum, r2_checksum  )->by_default(this->r2  )->as_number();
 
     // Thermistor pin for ADC readings
-    this->thermistor_pin.from_string(THEKERNEL->config->value(module_checksum, name_checksum, thermistor_pin_checksum )->by_default("C.2")->as_string());
+    this->thermistor_pin.from_string(THEKERNEL->config->value(module_checksum, name_checksum, thermistor_pin_checksum )->required()->as_string());
     THEKERNEL->adc->enable_pin(&thermistor_pin);
 
     // specify the three Steinhart-Hart coefficients
