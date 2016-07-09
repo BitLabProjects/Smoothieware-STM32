@@ -41,8 +41,8 @@ public:
 
 private:
     PinName _pin_to_pinname(Pin *pin);
-    //AnalogInEx input;
-    mbed::AnalogIn input;
+    AnalogInEx input;
+    //mbed::AnalogIn input;
 
     static const int num_channels= 6;
 #ifdef OVERSAMPLE

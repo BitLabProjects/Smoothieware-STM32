@@ -11,6 +11,8 @@
 #include "libs/Pin.h"
 #include "libs/Median.h"
 
+#include "StreamOutputPool.h"
+
 #include <cstring>
 #include <algorithm>
 
@@ -28,11 +30,11 @@ static void callback(uint32_t offset, uint32_t length)
 {
     int channel = 0;
     for(uint32_t i=offset; i<offset+length; i++) {
-        Adc::instance->new_sample(channel, buffer[i]);
+        Adc::instance->new_sample(channel, buffer[i]<<4);
     }
 }
 
-Adc::Adc(): input(PC_2)
+Adc::Adc()//: input(PC_2)
 {
     instance = this;
     
@@ -42,8 +44,8 @@ Adc::Adc(): input(PC_2)
     //TODO Configure the sampling time to be 1KHz
     const uint32_t sample_rate= 1000; // 1KHz sample rate
 
-    //input.init(PC_2, buffer, SAMPLE_BUFFER_LENGTH, callback);
-    //input.start();
+    input.init(PC_2, buffer, SAMPLE_BUFFER_LENGTH, callback);
+    input.start();
 }
 
 // Enables ADC on a given pin
@@ -76,8 +78,8 @@ void Adc::new_sample(int chan, uint32_t value)
 // Read the filtered value ( burst mode ) on a given pin
 unsigned int Adc::read(Pin *pin)
 {
-    unsigned int value = (unsigned int) this->input.read_u16();
-    return value >> 4;
+    //unsigned int value = (unsigned int) this->input.read_u16();
+    //return value >> 4;    
 
 #warning STM32
 /* FIXME STM32

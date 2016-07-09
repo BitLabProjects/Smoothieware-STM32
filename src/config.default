@@ -56,14 +56,19 @@ temperature_control.hotend.heater_pin          B.7               # Pin that cont
 temperature_control.hotend.pwm_frequency       2000 
 temperature_control.hotend.max_pwm             255              # Duty cycle
 temperature_control.hotend.readings_per_second 20
-temperature_control.hotend.bang_bang           true            # set to true to use bang bang control rather than PID
-temperature_control.hotend.hysteresis          2.0              # set to the temperature in degrees C to use as hysteresis when
+#temperature_control.hotend.bang_bang           true            # set to true to use bang bang control rather than PID
+#temperature_control.hotend.hysteresis          1.0              # set to the temperature in degrees C to use as hysteresis when
+
+#Resulted from PID Autotune:
+temperature_control.hotend.p_factor            32.2             
+temperature_control.hotend.i_factor            2.485
+temperature_control.hotend.d_factor            104
 
 #temperature_control.hotend.thermistor         EPCOS100K        # see http://smoothieware.org/temperaturecontrol#toc5
 temperature_control.hotend.r0                  100000
 temperature_control.hotend.t0                  25
 temperature_control.hotend.r1                  0
-temperature_control.hotend.r2                  50000
+temperature_control.hotend.r2                  4700
 temperature_control.hotend.beta                3950
 
 #temperature_control.hotend.set_m_code        104              #
