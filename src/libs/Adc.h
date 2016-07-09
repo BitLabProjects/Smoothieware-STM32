@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include "ADC\AnalogInEx.h"
+#include "AnalogIn.h"
 
 class Pin;
 
@@ -40,7 +41,8 @@ public:
 
 private:
     PinName _pin_to_pinname(Pin *pin);
-    AnalogInEx input;
+    //AnalogInEx input;
+    mbed::AnalogIn input;
 
     static const int num_channels= 6;
 #ifdef OVERSAMPLE
