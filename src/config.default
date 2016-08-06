@@ -14,9 +14,9 @@
 #mm_per_line_segment                          5                # Lines can be cut into segments ( not usefull with cartesian coordinates robots ).
 
 # Arm solution configuration : Cartesian robot. Translates mm positions into stepper positions
-alpha_steps_per_mm                           150
-beta_steps_per_mm                            150
-gamma_steps_per_mm                           150
+alpha_steps_per_mm                           51
+beta_steps_per_mm                            51
+gamma_steps_per_mm                           2400
 
 # Planner module configuration : Look-ahead and acceleration configuration
 #planner_queue_size                           32               # DO NOT CHANGE THIS UNLESS YOU KNOW EXACTLY WHAT YOUR ARE DOING
@@ -31,21 +31,21 @@ alpha_step_pin                               A.10             # Pin for alpha st
 alpha_dir_pin                                B.3              # Pin for alpha stepper direction
 #alpha_en_pin                                 A.10             # Pin for alpha enable pin
 #alpha_current                                1.0              # X stepper motor current
-#x_axis_max_speed                             30000            # mm/min
+x_axis_max_speed                             400            # mm/min
 #alpha_max_rate                               30000.0          # mm/min actuator max speed
 
 beta_step_pin                                B.10             # Pin for beta stepper step signal
 beta_dir_pin                                 A.8              # Pin for beta stepper direction
 #beta_en_pin                                  B.4              # Pin for beta enable
 #beta_current                                 1.0              # Y stepper motor current
-#y_axis_max_speed                             30000            # mm/min
+y_axis_max_speed                             400            # mm/min
 #beta_max_rate                                30000.0          # mm/min actuator max speed
 
 gamma_step_pin                               B.5              # Pin for gamma stepper step signal
 gamma_dir_pin                                B.4              # Pin for gamma stepper direction
 #gamma_en_pin                                 B.14             # Pin for gamma enable
 #gamma_current                                1.0              # Z stepper motor current
-#z_axis_max_speed                             300              # mm/min
+z_axis_max_speed                             10              # mm/min
 #gamma_max_rate                               300.0            # mm/min actuator max speed
 
 
@@ -78,6 +78,17 @@ temperature_control.hotend.beta                3950
 #temperature_control.hotend.p_factor          13.7             #
 #temperature_control.hotend.i_factor          0.097            #
 #temperature_control.hotend.d_factor          24               #
+
+# Extruder
+extruder.hotend.enable                       true             # Whether to activate the extruder module at all. All configuration is ignored if false
+extruder.hotend.steps_per_mm                 95               # Steps per mm for extruder stepper
+extruder.hotend.default_feed_rate            350              # Default rate ( mm/minute ) for moves where only the extruder moves
+extruder.hotend.acceleration                 500              # Acceleration in mm/sec^2, only used for retracts
+extruder.hotend.max_speed                    1000             # mm/sec NOTE only used for retracts
+extruder.hotend.step_pin                     A.9              # Pin for extruder step signal
+extruder.hotend.dir_pin                      C.7              # Pin for extruder dir signal
+#extruder_en_pin                             0.4              # Pin for extruder enable signal
+
 
 # Endstops
 endstops_enable                              true             # the endstop module is enabled by default and can be disabled here
