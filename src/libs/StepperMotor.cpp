@@ -173,9 +173,10 @@ StepperMotor* StepperMotor::move( bool direction, unsigned int steps, float init
 // fx_ticks_per_step is what actually sets the step rate, it is fixed point 18.14
 StepperMotor* StepperMotor::set_speed( float speed )
 {
-    if(speed < minimum_step_rate) {
+    //For now dont force a minimum step rate, the correct thing is to reallign to smootieware which has a new stepper handling
+    /*if(speed < minimum_step_rate) {
         speed= minimum_step_rate;
-    }
+    }*/
 
     // if(speed <= 0.0F) { // we can't actually do 0 but we can get close, need to avoid divide by zero later on
     //     this->fx_ticks_per_step= 0xFFFFFFFFUL; // 0.381 steps/sec
