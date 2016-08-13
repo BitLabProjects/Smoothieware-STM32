@@ -27,6 +27,8 @@ using namespace std;
 #include "libs/nuts_bolts.h"
 #include "libs/Hook.h"
 
+#include "libs/StreamOutputPool.h"
+
 #include <mri.h>
 
 // The stepper reacts to blocks that have XYZ movement to transform them into actual stepper motor moves
@@ -174,9 +176,9 @@ void Stepper::on_block_begin(void *argument)
     // else
     //   Lancia il movimento normale
     
-    #define ALPHA_COMPENSATION_STEPS 80
-    #define BETA_COMPENSATION_STEPS 80
-    #define GAMMA_COMPENSATION_STEPS 80
+    #define ALPHA_COMPENSATION_STEPS 64
+    #define BETA_COMPENSATION_STEPS 64
+    #define GAMMA_COMPENSATION_STEPS 64
     bool comp_alpha = block->direction_bits[ALPHA_STEPPER] != this->previous_direction_bits[ALPHA_STEPPER];
     bool comp_beta  = block->direction_bits[BETA_STEPPER] != this->previous_direction_bits[BETA_STEPPER];
     bool comp_gamma = block->direction_bits[GAMMA_STEPPER] != this->previous_direction_bits[GAMMA_STEPPER];
@@ -185,12 +187,18 @@ void Stepper::on_block_begin(void *argument)
         if (comp_alpha) {
             this->main_stepper = THEKERNEL->robot->alpha_stepper_motor;
             this->previous_direction_bits[ALPHA_STEPPER] = block->direction_bits[ALPHA_STEPPER];
-            THEKERNEL->robot->alpha_stepper_motor->move( block->direction_bits[ALPHA_STEPPER], ALPHA_COMPENSATION_STEPS, this->current_block->nominal_rate)->set_moved_last_block(true);
+            //THEKERNEL->robot->alpha_stepper_motor->move( block->direction_bits[ALPHA_STEPPER], ALPHA_COMPENSATION_STEPS, this->current_block->nominal_rate)->set_moved_last_block(true);
+            float maxRate = THEKERNEL->robot->alpha_stepper_motor->get_max_rate();
+            float stepsMM = THEKERNEL->robot->alpha_stepper_motor->get_steps_per_mm();
+            float curRate = maxRate*stepsMM;            
+            THEKERNEL->robot->alpha_stepper_motor->move( block->direction_bits[ALPHA_STEPPER], ALPHA_COMPENSATION_STEPS, curRate)->set_moved_last_block(true);
         }
         if (comp_beta) {
             this->main_stepper = THEKERNEL->robot->beta_stepper_motor;
             this->previous_direction_bits[BETA_STEPPER] = block->direction_bits[BETA_STEPPER];
-            THEKERNEL->robot->beta_stepper_motor->move( block->direction_bits[BETA_STEPPER], BETA_COMPENSATION_STEPS, this->current_block->nominal_rate)->set_moved_last_block(true);
+            //THEKERNEL->robot->beta_stepper_motor->move( block->direction_bits[BETA_STEPPER], BETA_COMPENSATION_STEPS, this->current_block->nominal_rate)->set_moved_last_block(true);
+            float curRate = THEKERNEL->robot->beta_stepper_motor->get_max_rate()*THEKERNEL->robot->beta_stepper_motor->get_steps_per_mm();
+            THEKERNEL->robot->beta_stepper_motor->move( block->direction_bits[BETA_STEPPER], BETA_COMPENSATION_STEPS, curRate)->set_moved_last_block(true);
         }
         if (comp_gamma) {
             this->main_stepper = THEKERNEL->robot->gamma_stepper_motor;
