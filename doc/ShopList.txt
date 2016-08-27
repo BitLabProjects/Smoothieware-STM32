@@ -1,0 +1,13 @@
+						€
+
+Termistori:				
+	B57540G0104F000		3.60
+	135-104LAG-J01		2.20
+	
+Estrusore:
+	http://www.ebay.com/itm/All-Metal-J-Head-Hot-End-V6-for-RepRap-3D-Printer-Bowden-Extruder-3-0mm-0-5mm-/252060195783#shpCntId
+	
+Piatto:
+
+Resistenze
+	10W 30Ohm x27

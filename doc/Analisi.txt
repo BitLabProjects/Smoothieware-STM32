@@ -1,0 +1,58 @@
+http://smoothieware.org/howitworks
+
+main.cpp
+	init()
+		Caricamento moduli, alcuni disabilitati da makefile (#ifndef)
+		Accende i LED se presente l'SD card
+		Avvia lo stream del file (punto d'attacco del g-code)
+		Avvia il contatore del kernel
+	
+	main()
+		init()
+		loop principale
+			lampeggia il LED
+			call-event: ON_MAIN_LOOP e ON_IDLE (eventi presenti nei moduli installati secondo interfaccia)
+
+Eventi
+	on_main_loop,
+  on_console_line_received,
+  on_gcode_received,
+  on_gcode_execute,
+  on_speed_change,
+  on_block_begin,
+  on_block_end,
+  on_play,
+  on_pause,
+  on_idle,
+  on_second_tick,
+  on_get_public_data,
+  on_set_public_data,
+  on_halt
+
+Moduli
+	Per ogni evento sottoscritto il modulo esegue un fallback
+	
+	Conveyor: si occupa della gestione della coda dei blocchi di g-code (ring-buffer)
+	
+	Moduli caricati
+		SimpleShell: mini shell con comandi basilari
+		Configurator: esegue i comandi riguardanti il settaggio delle impostazioni
+		CurrentControl : controllo corrente tramite chip
+		PauseButton
+		PlayLed
+		EndStops: gestione fine corsa
+		Player: esegue il g-code
+		
+
+
+Merge con smoothieware edge
+File da controllare se sono cambiati dall'ultimo merge, per cui è stato fatto keep mine del file intero:
+-- SlowTicker.h/cpp
+-- Pin.h/cpp
+  Perché sul costruttore disabilita dicendo di aspettare lo start, mentre fa anche set_frequency che lo abilita?
+-- 
+Capire come è cambiato lo step ticker/stepper/steppermotor
+-- Tolto acceleration tick e timer
+-- 
+
+Che cassio è new(AHB0) ? 
